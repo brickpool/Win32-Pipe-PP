@@ -1,7 +1,7 @@
 !Build/
 .last_cover_stats
-/META.yml
-/META.json
+#/META.yml
+#/META.json
 /MYMETA.*
 *.o
 *.pm.tdy
@@ -13,7 +13,7 @@ cover_db/
 # Devel::NYTProf
 nytprof.out
 
-# Dist::Zilla
+# Dizt::Zilla
 /.build/
 
 # Module::Build
@@ -34,8 +34,24 @@ inc/
 /pm_to_blib
 /*.zip
 
-# Carton/Carmel
-/local/
-/.carmel/
-# cpanfile.snapshot should generally be ignored for library code, otherwise included
-# cpanfile.snapshot 
+# Documents
+/doc/*/
+/doc/*.html
+/doc/*.css
+
+# Sources
+/lib/_*
+/src/
+/t/_*
+/xt/_*
+
+# Komodo IDE
+*.komodoproject
+/.komodotools/
+
+# VS Code
+/.vscode/
+*.code-workspace
+
+# Devel
+/trial/

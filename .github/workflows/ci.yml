@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-windows:
+    runs-on: windows-latest
+    name: Perl Tests on Windows
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Perl
+        uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: '5.36'
+
+      - name: Install dependencies
+        run: |
+          cpanm --quiet --notest Win32::API Test::More Test::Exception
+
+      - name: Run tests
+        run: |
+          perl Makefile.PL
+          dmake test || nmake test || gmake test

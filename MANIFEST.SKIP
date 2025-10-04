@@ -1,0 +1,40 @@
+# Build artifacts
+^Makefile$
+^Makefile\.old$
+^blib/
+^_build/
+^pm_to_blib$
+^Build$
+^Build\.bat$
+^Build\.PL$
+
+# CPAN packaging
+^Win32-Pipe-PP-\d
+^META\.yml$
+^META\.json$
+^MANIFEST\.SKIP$
+^MYMETA\..*
+^*.tar\.gz$
+
+# Editor/IDE
+^\.gitignore$
+^\.vscode/
+^\.idea/
+^.*\.swp$
+^.*\.bak$
+^.*~$
+
+# Coverage and profiling
+^cover_db/
+^nytprof\.out$
+
+# Author-only tests
+^xt/
+
+# Local config
+^local\.conf$
+
+# Extra
+^\.github/
+^\.git/
+^src/
