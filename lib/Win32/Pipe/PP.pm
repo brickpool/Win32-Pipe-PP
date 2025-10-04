@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: MIT
 
-package Win32::Pipe;
+package Win32::Pipe::PP;
 
 # ABSTRACT: Pure Perl Win32::Pipe drop-in replacement using Win32::API
 
@@ -13,7 +13,7 @@ use warnings;
 
 # version '...'
 our $version = '0.026';
-our $VERSION = 'v0.1.0';
+our $VERSION = 'v0.1.1';
 $VERSION = eval $VERSION;
 
 # authority '...'
@@ -548,6 +548,29 @@ sub get_Win32_IPC_HANDLE {
   my ($self) = @_;
   return INVALID_HANDLE_VALUE unless ref $self && defined $self->{handle};
   return $self->{handle};
+}
+
+{
+  package    # hide from CPAN
+    Win32::Pipe;
+  no strict 'refs';
+  no warnings 'redefine';
+  *new          = \&Win32::Pipe::PP::new;
+  *DESTROY      = \&Win32::Pipe::PP::DESTROY;
+  *Write        = \&Win32::Pipe::PP::Write;
+  *Read         = \&Win32::Pipe::PP::Read;
+  *Error        = \&Win32::Pipe::PP::Error;
+  *Close        = \&Win32::Pipe::PP::Close;
+  *Connect      = \&Win32::Pipe::PP::Connect;
+  *Disconnect   = \&Win32::Pipe::PP::Disconnect;
+  *BufferSize   = \&Win32::Pipe::PP::BufferSize;
+  *ResizeBuffer = \&Win32::Pipe::PP::ResizeBuffer;
+  *Info         = \&Win32::Pipe::PP::Info;
+  *Credit       = \&Win32::Pipe::PP::Credit
+                    unless defined \&Win32::Pipe::Credit;
+  *Center       = \&Win32::Pipe::PP::Center
+                    unless defined \&Win32::Pipe::Center;
+  *get_Win32_IPC_HANDLE = \&Win32::Pipe::PP::get_Win32_IPC_HANDLE;
 }
 
 1;
