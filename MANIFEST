@@ -10,4 +10,5 @@ t/03_behavior.t
 t/04_error_codes.t
 t/05_read_write.t
 t/06_ipc_support.t
-Win32-Pipe-PP.code-workspace
+t/07_non-blocking.t
+t/08_threads.t

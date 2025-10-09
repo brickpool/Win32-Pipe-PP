@@ -11,6 +11,7 @@ WriteMakefile(
         'Exporter'       => 0,
         'Win32'          => 0,
         'Win32::API'     => 0,
+        'Win32::IPC'     => 0,
         'Win32API::File' => 0,
         'Test::More'     => 0,
     },

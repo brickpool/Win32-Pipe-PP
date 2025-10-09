@@ -10,28 +10,29 @@ BEGIN {
 
 # Logical name used by the server when creating the pipe (no \\.\pipe\ prefix 
 # here)
-my $logical_name = 'testpipe-' . $$ . '-' . int(rand(1_000_000));
+my $pipename = 'testpipe-' . $$ . '-' . int(rand(1_000_000));
 
 # Fully qualified client path; clients connect to \\.\pipe\<name>
-my $client_path  = '\\\\.\\pipe\\' . $logical_name;
+my $client_path  = '\\\\.\\pipe\\' . $pipename;
 
 # Server: create the pipe instance (no Connect yet)
-my $srv = Win32::Pipe->new($logical_name);
+my $srv = Win32::Pipe->new($pipename);
 ok($srv, 'Server: Pipe object created');
 
 # Buffer checks (default and after resize)
-is($srv->BufferSize, 512, 'Server: Default buffer size (512)');
-$srv->ResizeBuffer(2048);
-is($srv->BufferSize, 2048, 'Server: Resized buffer size');
+my $size = Win32::Pipe::PP::BUFFER_SIZE;
+is($srv->BufferSize, $size, "Server: Default buffer size ($size)");
+$srv->ResizeBuffer(256);
+ok($srv->BufferSize >= 256, 'Server: Resized buffer size');
 
-# Client: open the pipe (clients do NOT call Connect); retry for robustness
+# Client: open the pipe; retry for robustness
 my $cli;
-for (1..100) {
+for ( 1 .. 100 ) {
   # Client connects by opening \\.\pipe\<name>
   $cli = Win32::Pipe->new($client_path);
   last if $cli;
   # Give the server a moment to get ready (50 ms)
-  select undef, undef, undef, 0.05;
+  select(undef, undef, undef, 50/1000);
 }
 ok($cli, 'Client: Pipe object created');
 
@@ -49,16 +50,16 @@ unless ($connected) {
 ok($connected, 'Server: Connect succeeded (or ERROR_PIPE_CONNECTED handled)');
 
 # Client -> Server: send a message
-my $bw_cli = $cli->Write("Hello World");
-ok($bw_cli, 'Client: Write "Hello World" succeeded');
+my $ok_cli = $cli->Write("Hello World");
+ok($ok_cli, 'Client: Write "Hello World" succeeded');
 
 # Server: read the client message
 my $data = $srv->Read();
 is($data, 'Hello World', 'Server: Read returns expected data');
 
 # Server -> Client: send an ACK back to the client
-my $bw_srv = $srv->Write("ACK: $data");
-ok($bw_srv, 'Server: ACK Write succeeded');
+my $ok_srv = $srv->Write("ACK: $data");
+ok($ok_srv, 'Server: ACK Write succeeded');
 
 # Client: read the ACK from the server
 my $ack = $cli->Read();

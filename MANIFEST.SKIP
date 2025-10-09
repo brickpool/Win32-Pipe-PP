@@ -17,6 +17,7 @@
 ^*.tar\.gz$
 
 # Editor/IDE
+^.*\.code-workspace$
 ^\.gitignore$
 ^\.vscode/
 ^\.idea/
