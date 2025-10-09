@@ -9,21 +9,24 @@ on:
 jobs:
   test-windows:
     runs-on: windows-latest
-    name: Perl Tests on Windows
+    name: Native Strawberry Perl on Windows
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Perl
+      - name: Install Strawberry Perl
         uses: shogo82148/actions-setup-perl@v1
         with:
-          perl-version: '5.36'
+          distribution: "strawberry"
+          perl-version: "5.36"
+
+      - name: Verify Perl version
+        run: perl -V
 
       - name: Install dependencies
-        run: |
-          cpanm --quiet --notest Win32::API Test::More Test::Exception
+        run: cpanm --quiet --notest Carp Exporter Win32 Win32::API Win32API::File Test::More
 
       - name: Run tests
         run: |
           perl Makefile.PL
-          dmake test || nmake test || gmake test
+          gmake test
