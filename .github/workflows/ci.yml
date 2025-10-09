@@ -24,7 +24,7 @@ jobs:
         run: perl -V
 
       - name: Install dependencies
-        run: cpanm --quiet --notest Carp Exporter Win32 Win32::API Win32API::File Test::More
+        run: cpanm --quiet --notest Carp Exporter Win32 Win32::API Win32::IPC Win32API::File Test::More
 
       - name: Run tests
         run: |
