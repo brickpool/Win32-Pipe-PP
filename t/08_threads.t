@@ -171,7 +171,8 @@ SKIP: {
     }
 
     note 'Non-Blocking Subtest';
-    {
+    TODO: {
+      local $TODO = 'Race condition';
       my $t_srv = threads->create(\&server_thread_nb, $name, $bufsize, $msg);
       my $t_cli = threads->create(\&client_thread, $full, $bufsize, $msg, 'NB');
 

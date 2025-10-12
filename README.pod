@@ -17,7 +17,7 @@ compatibility and improved maintainability.
 
 =item * Provide full API compatibility with Win32::Pipe
 
-=item * Support IPC integration via C<get_Win32_IPC_HANDLE>
+=item * Support L<Win32::IPC> integration via C<get_Win32_IPC_HANDLE>
 
 =item * Enable modular testing and extensibility
 
@@ -31,7 +31,7 @@ compatibility and improved maintainability.
 
 =item * Message mode and advanced flags are simplified or stubbed
 
-=item * Overlapped I/O is not yet supported
+=item * Uses Windows waitable functions in new methods C<wait> and C<blocking>
 
 =back
 
@@ -39,13 +39,11 @@ compatibility and improved maintainability.
 
 =over
 
-=item * C<Read()> handles ERROR_MORE_DATA correctly and returns complete data
+=item * C<Read()> handles C<ERROR_MORE_DATA> correctly and returns complete data
 
 =item * Consistent error reporting via C<Error()>
 
 =item * IPC compatibility without inheritance - via C<get_Win32_IPC_HANDLE>
-
-=item * Clean separation of pipe handle and metadata for event loops
 
 =back
 
@@ -73,6 +71,8 @@ This distribution follows CPAN best practices for layout and packaging:
   !   +-- 04_error_codes.t     # Error handling and return values
   !   +-- 05_read_write.t      # Client server test
   !   +-- 06_ipc_support.t     # Compatibility with Win32::IPC::wait_any
+  !   +-- 07_non-blocking.t    # Non Blocking test
+  !   +-- 08_threads.t         # Compatibility with threads
   +-- .github/
   !   '-- workflows/
   !       '-- ci.yml           # GitHub Actions workflow for automated testing

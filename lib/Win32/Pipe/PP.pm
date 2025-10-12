@@ -13,7 +13,7 @@ use warnings;
 
 # version '...'
 our $version = '0.026';
-our $VERSION = 'v0.2.0';
+our $VERSION = 'v0.2.1';
 $VERSION = eval $VERSION;
 
 # authority '...'
@@ -104,7 +104,7 @@ BEGIN {
   $GetNamedPipeInfo = Win32::API::More->new('Kernel32',
     'BOOL GetNamedPipeInfo(
       HANDLE  hNamedPipe,
-      LPVOID  LPDWORD lpFlags,
+      LPDWORD lpFlags,
       LPDWORD lpOutBufferSize,
       LPDWORD lpInBufferSize,
       LPDWORD lpMaxInstances
@@ -694,27 +694,13 @@ sub _fail {
 {
   package    # hide from CPAN
     Win32::Pipe;
-  no strict 'refs';
-  no warnings 'redefine';
-  *new                    = \&Win32::Pipe::PP::new;
-  *DESTROY                = \&Win32::Pipe::PP::DESTROY;
-  *Write                  = \&Win32::Pipe::PP::Write;
-  *Read                   = \&Win32::Pipe::PP::Read;
-  *Error                  = \&Win32::Pipe::PP::Error;
-  *Close                  = \&Win32::Pipe::PP::Close;
-  *Connect                = \&Win32::Pipe::PP::Connect;
-  *Disconnect             = \&Win32::Pipe::PP::Disconnect;
-  *BufferSize             = \&Win32::Pipe::PP::BufferSize;
-  *ResizeBuffer           = \&Win32::Pipe::PP::ResizeBuffer;
-  *Info                   = \&Win32::Pipe::PP::Info;
-  *Credit                 = \&Win32::Pipe::PP::Credit
-                            unless exists &Win32::Pipe::Credit;
-  *Center                 = \&Win32::Pipe::PP::Center
-                            unless exists &Win32::Pipe::Center;
-  *blocking               = \&Win32::Pipe::PP::blocking;
-  *{__PACKAGE__.'::wait'} = \&Win32::Pipe::PP::wait;
-  *get_Win32_IPC_HANDLE   = \&Win32::Pipe::PP::get_Win32_IPC_HANDLE;
-  *_fail                  = \&Win32::Pipe::PP::_fail;
+  no warnings;
+  if ($ENV{WIN32_PIPE_IMPLEMENTATION} ne 'XS') {
+    our @ISA = qw( Win32::Pipe::PP );
+    no strict 'refs';
+    *Error       = \&Win32::Pipe::PP::Error;
+    *BUFFER_SIZE = \&Win32::Pipe::PP::BUFFER_SIZE;
+  }
 }
 
 1;

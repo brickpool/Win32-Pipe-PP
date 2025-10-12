@@ -40,7 +40,7 @@ ok($cli, 'Client: Pipe object created');
 # connected)
 my $connected = $srv->Connect;
 unless ($connected) {
-  my ($ecode, $emsg) = Win32::Pipe::Error();
+  my ($ecode, $emsg) = Win32::Pipe->Error();
   # Windows allows a client to connect between CreateNamedPipe and 
   # ConnectNamedPipe. If that happens, ConnectNamedPipe fails and 
   # GetLastError() == ERROR_PIPE_CONNECTED (535), which should be treated as a 
@@ -66,7 +66,7 @@ my $ack = $cli->Read();
 is($ack, 'ACK: Hello World', 'Client: Read ACK returns expected data');
 
 # Check last error after successful operations (should be 0 / no message)
-my ($code, $msg) = Win32::Pipe::Error();
+my ($code, $msg) = Win32::Pipe->Error();
 is($code, 0, 'Server: No error code after successful ops');
 ok(!$msg, 'Server: No error message');
 
