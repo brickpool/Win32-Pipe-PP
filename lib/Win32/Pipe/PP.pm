@@ -13,7 +13,7 @@ use warnings;
 
 # version '...'
 our $version = '0.026';
-our $VERSION = 'v0.2.1';
+our $VERSION = 'v0.2.2';
 $VERSION = eval $VERSION;
 
 # authority '...'
@@ -771,9 +771,13 @@ Resizes the internal buffer.
 
 Returns a array with internal metadata.
 
+=item wait
+
+Wait for Read to be signalled. See L<Win32::IPC>.
+
 =item get_Win32_IPC_HANDLE
 
-Returns the raw handle for IPC integration.
+Returns the raw handle for L<Win32::IPC> integration.
 
 =back
 

@@ -1,5 +1,9 @@
 Revision history for Win32::Pipe::PP
 
+0.2.2  2025-10-24
+    - README and POD adjustment
+    - Update Makefile.PL
+
 0.2.1  2025-10-12
     - Inject Win32::Pipe::PP as base class for Win32::Pipe
     - Update tests for threads and ipc support
