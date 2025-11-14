@@ -1,7 +1,10 @@
 Revision history for Win32::Pipe::PP
 
+0.2.3  2025-11-14
+    - Minor adjustment
+
 0.2.2  2025-10-24
-    - README and POD adjustment
+    - Update README
     - Update Makefile.PL
 
 0.2.1  2025-10-12

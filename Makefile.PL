@@ -3,9 +3,9 @@ use warnings;
 
 use ExtUtils::MakeMaker;
 
-die "OS unsupported\n" if $^O eq 'cygwin';
-
-use ExtUtils::MakeMaker;
+unless ($^O eq "MSWin32" || $^O eq "cygwin") {
+  die "OS unsupported\n";
+}
 
 WriteMakefile1(
   NAME          => 'Win32::Pipe::PP',

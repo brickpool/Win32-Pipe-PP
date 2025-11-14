@@ -4,25 +4,25 @@ package Win32::Pipe::PP;
 
 # ABSTRACT: Pure Perl Win32::Pipe drop-in replacement using Win32::API
 
-# -----------
+#------------
 # Boilerplate
-# -----------
+#------------
 
 use strict;
 use warnings;
 
 # version '...'
 our $version = '0.026';
-our $VERSION = 'v0.2.2';
+our $VERSION = 'v0.2.3';
 $VERSION = eval $VERSION;
 
 # authority '...'
 our $authority = 'cpan:JDB';
 our $AUTHORITY = 'cpan:BRICKPOOL';
 
-# ------------
+#-------------
 # Used Modules
-# ------------
+#-------------
 
 require bytes;
 use Carp qw( croak );
@@ -39,9 +39,9 @@ use Win32API::File qw(
   :Misc
 );
 
-# -------
+#--------
 # Imports
-# -------
+#--------
 
 my $ConnectNamedPipe;
 my $CreateNamedPipeA;
@@ -112,9 +112,9 @@ BEGIN {
   ) or die "Import GetNamedPipeInfo: $^E";
 }
 
-# -------
+#--------
 # Exports
-# -------
+#--------
 
 use Exporter qw( import );
 
@@ -122,9 +122,9 @@ our @EXPORT = qw(
   DEFAULT_WAIT_TIME
 );
 
-# ---------
+#----------
 # Constants
-# ---------
+#----------
 
 # Exportable constants
 use constant {
@@ -164,7 +164,7 @@ use constant {
   BUFFER_SIZE      => 512,
 };
 
-# ---------
+#----------
 # Variables
 #----------
 
@@ -172,11 +172,11 @@ use constant {
 our $ErrorNum  = 0;
 our $ErrorText = '';
 
-# ----------------------
+#-----------------------
 # Constructor/Destructor
-# ----------------------
+#-----------------------
 
-sub new {
+sub new {    # $self ($name, |$timeout)
   my ($class, $name, $timeout) = @_;
   croak qq(usage: new(\$class, \$name [, \$timeout]);\n) 
     unless @_ >= 2 && @_ <= 3 && $class;
@@ -276,18 +276,18 @@ sub new {
   bless $self, $class;
 }
 
-sub DESTROY {
+sub DESTROY {    # void ()
   my ($self) = @_;
   $self->Close();
   return;
 }
 
-# -------------------
-# Subroutines/Methods
-#--------------------
+#---------------------------
+# Public Subroutines/Methods
+#---------------------------
 
 # Read and Write methods
-sub Write {
+sub Write {    # $bool ($data)
   my ($self, $data) = @_;
   croak "usage: Write(\$pipe, \$data);\n" unless @_ == 2 && ref $self;
 
@@ -337,7 +337,7 @@ sub Write {
   return 1;
 }
 
-sub Read {
+sub Read {    # $data|undef ()
   my ($self) = @_;
   croak "usage: Read(\$pipe)\n" unless @_ == 1 && ref $self;
 
@@ -427,7 +427,7 @@ sub Read {
 }
 
 # Internal error handling
-sub Error {
+sub Error {    # $|@ ()
   my ($self) = @_;
   croak "usage: Error([\$class | \$pipe]);\n" if @_ > 1;
 
@@ -441,7 +441,7 @@ sub Error {
 }
 
 # Connect, Disconnect and Close methods
-sub Close {
+sub Close {    # $bool ()
   my ($self) = @_;
   croak "usage: Close(\$pipe);\n" unless @_ == 1 && ref $self;
 
@@ -476,7 +476,7 @@ sub Close {
   return 1;
 }
 
-sub Connect {
+sub Connect {    # $bool ()
   my ($self) = @_;
   croak "usage: Connect(\$pipe);\n" unless @_ == 1 && ref $self;
 
@@ -491,7 +491,7 @@ sub Connect {
   return 1;
 }
 
-sub Disconnect {
+sub Disconnect {    # $bool (| $purge)
   my ($self, $purge) = @_;
   croak "usage: Disconnect(\$pipe [, \$purge]);\n"
     unless @_ >= 1 && @_ <= 2 && ref $self;
@@ -564,13 +564,13 @@ sub Disconnect {
 }
 
 # Buffer management
-sub BufferSize {
-  my ($self, $size) = @_;
+sub BufferSize {    # $bool ()
+  my ($self) = @_;
   croak "usage: BufferSize(\$pipe);\n" unless @_ == 1 && ref $self;
   return $self->{bufferSize};
 }
 
-sub ResizeBuffer {
+sub ResizeBuffer {    # $bool ($size)
   my ($self, $size) = @_;
   croak "usage: ResizeBuffer(\$pipe, \$size);\n" unless @_ == 2 && ref $self;
   $size += 0;
@@ -592,7 +592,7 @@ sub ResizeBuffer {
 }
 
 # Meta methods
-sub Info {
+sub Info {    # @meta ()
   return (
     'Win32::Pipe::PP', 
     $VERSION, 
@@ -608,7 +608,7 @@ sub Center { ... }
 
 # Extensions
 
-sub blocking {
+sub blocking {    # $value (|$value)
   my ($self, $value) = @_;
   croak "usage: blocking(\$pipe [, \$value]);\n" 
     unless @_ >= 1 && @_ <= 2 && ref $self;
@@ -619,7 +619,7 @@ sub blocking {
 }
 
 # Wait for Win32::Event to be signalled. See Win32::IPC.
-sub wait {
+sub wait {    # $int|undef (|$timeout)
   my ($self, $timeout) = @_;
   croak "usage: wait(\$pipe [, \$timeout]);\n" 
     unless @_ >= 1 && @_ <= 2 && ref $self;
@@ -670,14 +670,17 @@ sub wait {
 }
 
 # Win32::IPC support
-sub get_Win32_IPC_HANDLE {
+sub get_Win32_IPC_HANDLE {    # $handle ()
   my ($self) = @_;
   my $hEvent = ${$self->{event}} if ref $self && $self->{event};
   return INVALID_HANDLE_VALUE unless defined $hEvent;
   return $hEvent;
 }
 
-# Private Methods
+#----------------------------
+# Private Subroutines/Methods
+#----------------------------
+
 sub _fail {
   if (@_ == 3 && ref $_[0]) {
     my $self = shift;
@@ -691,6 +694,9 @@ sub _fail {
   return;
 }
 
+#------------
+# Win32::Pipe
+#------------
 {
   package    # hide from CPAN
     Win32::Pipe;
@@ -713,9 +719,9 @@ Win32::Pipe::PP - Pure Perl replacement for Win32::Pipe using Win32::API
 
 =head1 SYNOPSIS
 
-  use Win32::Pipe::PP;
+  use Win32::Pipe::PP ();
   my $server = Win32::Pipe->new($name) or die ''.Win32::Pipe::Error();
-  $server->Connect() or die ''.Win32::Pipe->Error();
+  $server->Connect() or die ''.$server->Error();
   ...
   $client->Write("Hello");
   my $data = $server->Read();
@@ -724,62 +730,147 @@ Win32::Pipe::PP - Pure Perl replacement for Win32::Pipe using Win32::API
 =head1 DESCRIPTION
 
 This module provides a pure Perl implementation of L<Win32::Pipe> using 
-L<Win32::API>. It is designed as a drop-in replacement for the XS-based version, 
-with API compatibility. Please use the documentation of L<Win32::Pipe>.
+L<Win32::API>. It is designed as a drop-in replacement for the XS-based 
+version, with API compatibility. Please use the documentation of 
+L<Win32::Pipe>.
 
 =head1 METHODS
 
-=over
+The L<Win32::Pipe::PP> module provides the same Perl interface and works with 
+named pipes on Windows systems as the original L<Win32::Pipe> module. 
 
-=item new
+In addition, it supports a non-blocking modes, enabling flexible integration 
+into event-driven applications. In non-blocking mode — which can be set using 
+the L</blocking> method — the two operations, L</Read> and L</wait>, behave 
+asynchronously. Other operations, such as L</Write>, remain blocking to ensure 
+safe and complete data transmission. 
+
+The following methods are available to interact with the pipe:
+
+=head2 new
+
+ my $pipe = Win32::Pipe->new($name [, $timeout]);
 
 Creates a new pipe object.
 
-=item Read
+=head2 Read
+
+ my $data | undef = $pipe->Read();
 
 Reads data from the pipe.
 
-=item Write
+=head2 Write
+
+ my $bool = $pipe->Write($data);
 
 Writes data to the pipe.
 
-=item Error
+=head2 Error
 
-Returns the last error code.
+ my $errmsg | ($errno, $errtxt) = $pipe->Error();
+ my $errmsg | ($errno, $errtxt) = Win32::Pipe->Error();
+ my $errmsg | ($errno, $errtxt) = Win32::Pipe::Error();
 
-=item Close
+Returns the last error code/text.
+
+=head2 Close
+
+ my $bool = $pipe->Close();
 
 Closes the named pipe.
 
-=item Connect
+=head2 Connect
+
+ my $bool = $pipe->Connect();
 
 Create the instance and connects the named pipe.
 
-=item Disconnect
+=head2 Disconnect
+
+ my $bool = $pipe->Disconnect([$purge]);
 
 Disconnects the instance of the named pipe.
 
-=item BufferSize
+=head2 BufferSize
+
+ my $bool = $pipe->BufferSize();
 
 Returns the current buffer size.
 
-=item ResizeBuffer
+=head2 ResizeBuffer
+
+ my $bool = $pipe->ResizeBuffer($size);
 
 Resizes the internal buffer.
 
-=item Info
+=head2 Info
+
+ my @meta = $pipe->Info();
 
 Returns a array with internal metadata.
 
-=item wait
+=head2 blocking
 
-Wait for Read to be signalled. See L<Win32::IPC>.
+ my $value = $pipe->blocking([$value]);
 
-=item get_Win32_IPC_HANDLE
+Get the actual blocking mode or set the pipe in blocking or non-blocking mode.
+
+=head2 wait
+
+ my $int | undef = $pipe->wait([$timeout]);
+
+Wait for read to be signalled. See L<Win32::IPC>.
+
+=head2 get_Win32_IPC_HANDLE
+
+ my $handle = $pipe->get_Win32_IPC_HANDLE();
 
 Returns the raw handle for L<Win32::IPC> integration.
 
+=head1 CAVEATS and LIMITATIONS
+
+=head2 Character Encoding Support
+
+Currently, L<Win32::Pipe::PP> only supports the ANSI (A) versions of Windows 
+API functions. The Wide character (W) versions, which handle UTF-16 encoded 
+strings, are not yet supported.
+
+This means that all pipe names (max 256 characters, like the original), 
+messages, and string data must be encoded using ANSI-compatible character sets. 
+Unicode support via wide-character APIs may be added in a future release.
+
+=head2 non-blocking
+
+L<Win32::Pipe::PP> supports a non-blocking mode that affects only L</Read> 
+operations and L</wait> behavior. When a pipe is set to non-blocking:
+
+=over 4
+
+=item *
+L</Read> will return immediately. If no data is available, it returns an 
+empty string or undef, depending on context. 
+
+=item *
+L</wait> (the L<Win32::IPC>->wait counterpart) continues to detect activity on 
+the pipe as long as data is received.
+
+=head2 ResizeBuffer
+
+L</ResizeBuffer> will only work as the name expected if you perform a 
+re-instantiation because the size of the kernel buffer cannot be changed 
+dynamically. B<Note>: This behavior also applies to the XS-based version 
+L<Win32::Pipe>. 
+
+Currently, a buffer size of 512 bytes (like the original) is requested, which 
+may differ from the actual size of the kernel buffer (larger or equal). Calling 
+L</ResizeBuffer> in blocking mode leads to fragmentation of L</Read> and 
+L</Write>, i.e., both return I<earlier>.
+
 =back
+
+However, L</Write> operations are always blocking, regardless of the mode. This 
+means that if the pipe buffer is full, L</Write> will wait until space becomes 
+available.
 
 =head1 AUTHOR
 
